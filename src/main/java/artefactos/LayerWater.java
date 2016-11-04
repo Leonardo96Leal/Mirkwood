@@ -37,13 +37,13 @@ public class LayerWater extends MapLayer {
             graphics.putString(waterpos[i] - 2, i, String.valueOf(SymbolsMirk.WATER[0]));
             graphics.putString(waterpos[i] + 2, i, String.valueOf(SymbolsMirk.WATER[0]));*/
            
-            this.objectos[col][i]=new Water2_1();
-            this.objectos[col-1][i]=new Water1();
-            this.objectos[col+1][i]=new Water1();
-            this.objectos[col-2][i]=new Water0();
-            this.objectos[col+2][i]=new Water0();
+            this.objectos[waterpos[i]][i]=new Water2_1();
+            this.objectos[waterpos[i]-1][i]=new Water1();
+            this.objectos[waterpos[i]+1][i]=new Water1();
+            this.objectos[waterpos[i]-2][i]=new Water0();
+            this.objectos[waterpos[i]+2][i]=new Water0();
             if(lin==i){
-                this.objectos[col][i]=new Ponte();
+                this.objectos[waterpos[i]][i]=new Ponte();
             }
             
         }

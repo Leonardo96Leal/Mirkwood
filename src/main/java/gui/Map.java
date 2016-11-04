@@ -166,18 +166,23 @@ public class Map extends Panel {
 		refreshLand();
 	}
   private boolean canPass(int x, int y) {
+      if(x<0 || y<0 || x>49 || y>15){
+          return false;
+      }
+      else{
         for (MapLayer ml : layers) {
             if (ml.getMap()[x][y] != null) {
                 MapObject[][] map = ml.getMap();
                 MapObject mo = map[x][y];
-                if (ml.getMap()[x][y] instanceof Water2_1){
+                
                 if (!ml.getMap()[x][y].isWalkthrough()) {
                 {
                     return false;
                 }
-            }}
+            }
         }
     }
+      }
 
     return true;
     }
