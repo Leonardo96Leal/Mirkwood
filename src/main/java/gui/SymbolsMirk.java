@@ -7,4 +7,5 @@ public class SymbolsMirk {
 	public static final char HERO = 'φ';
 	public static final char FOE = 'Θ';
 	public static final char PONTE = '=';
+	public static final char GOLD = '*';
 }

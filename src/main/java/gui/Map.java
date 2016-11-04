@@ -1,6 +1,7 @@
 package gui;
 
 import artefactos.LayerFoes;
+import artefactos.LayerGold;
 import artefactos.LayerTrees;
 import artefactos.LayerWater;
 import artefactos.MapLayer;
@@ -49,6 +50,7 @@ public class Map extends Panel {
     LayerTrees trees = new LayerTrees();
     LayerWater water = new LayerWater();
     LayerFoes foe = new LayerFoes();
+    LayerGold gold = new LayerGold();
     public Map(Characters chars) {
         super();
 
@@ -63,6 +65,7 @@ public class Map extends Panel {
         layers.add(trees);
         layers.add(foe);
         layers.add(water);
+        layers.add(gold);
 
         land = new EmptySpace(new TextColor.RGB(165, 127, 61)) {
             protected ComponentRenderer<EmptySpace> createDefaultRenderer() {
@@ -83,7 +86,7 @@ public class Map extends Panel {
                         for (int x = 0; x < COLUMNS; x++) {
                             for (int y = 0; y < LINES; y++) {
                                 MapObject t = (MapObject) ml.getMap()[x][y];
-                                if (t != null) {
+                                if (t != null  && t.isVisible()) {
                                     graphics.setBackgroundColor(t.getBackgroundColor());
                                     graphics.setForegroundColor(t.getForegroundColor());
                                     graphics.putString(x, y, String.valueOf(t.getSymbol()));

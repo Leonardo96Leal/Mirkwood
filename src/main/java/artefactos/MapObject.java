@@ -18,6 +18,7 @@ public class MapObject {
     TextColor.RGB foregroundColor;
     TextColor.RGB backgroundColor;
     boolean walkthrough=true,visible=true;
+    int valor;
     
      protected Random _rand;
     
@@ -70,4 +71,14 @@ public class MapObject {
     public void setVisible(boolean visible) {
         this.visible = visible;
     }
+
+    public int getValor() {
+        return valor;
+    }
+
+    public void setValor(int valor) {
+        this.valor = valor;
+    }
+    
+    
 }
