@@ -17,8 +17,9 @@ public class MapObject {
     char symbol;
     TextColor.RGB foregroundColor;
     TextColor.RGB backgroundColor;
+    boolean walkthrough=true,visible=true;
     
-    Random _rand;
+     protected Random _rand;
     
     public MapObject() {
         _rand = new Random();
@@ -53,6 +54,20 @@ public class MapObject {
     public void setBackgroundColor(TextColor.RGB backgroundColor) {
         this.backgroundColor = backgroundColor;
     }
-    
-    
+
+    public boolean isWalkthrough() {
+        return walkthrough;
+    }
+
+    public void setWalkthrough(boolean walkthough) {
+        this.walkthrough = walkthough;
+    }
+
+    public boolean isVisible() {
+        return visible;
+    }
+
+    public void setVisible(boolean visible) {
+        this.visible = visible;
+    }
 }

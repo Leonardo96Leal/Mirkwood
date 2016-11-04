@@ -6,6 +6,7 @@
 package artefactos;
 
 import gui.Map;
+import java.util.Random;
 
 /**
  *
@@ -13,9 +14,10 @@ import gui.Map;
  */
 public class MapLayer {
     MapObject[][] objectos;
-    
+    public Random _rand;
     public MapLayer() {
         objectos = new MapObject[Map.COLUMNS][Map.LINES];
+        _rand=new Random();
     }
 
     public MapObject[][] getMap() {

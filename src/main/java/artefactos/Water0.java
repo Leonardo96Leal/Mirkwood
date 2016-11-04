@@ -6,6 +6,7 @@
 package artefactos;
 
 import com.googlecode.lanterna.TextColor;
+import com.googlecode.lanterna.TextColor.RGB;
 import gui.Map;
 import gui.SymbolsMirk;
 
@@ -13,13 +14,15 @@ import gui.SymbolsMirk;
  *
  * @author Trainerpl022
  */
-public class Tree2 extends MapObject {
-    
-    public Tree2() {
-        super();
-        setSymbol(SymbolsMirk.TREES[_rand.nextInt(SymbolsMirk.TREES.length)]);
-        setForegroundColor(new TextColor.RGB(51, _rand.nextInt(100)+100, 51));
+public class Water0 extends MapObject {
+    TextColor.RGB foreColor = new RGB(51, 102, 255);
+    //TextColor.RGB bkgColor = new RGB(51, 88, 230);
+    public Water0() {
+        super(SymbolsMirk.WATER[0], null, null);
+        setForegroundColor(foreColor);
         setBackgroundColor(Map.bkgColor);
+        //setWalkthrough(false);
     }
+
     
 }
