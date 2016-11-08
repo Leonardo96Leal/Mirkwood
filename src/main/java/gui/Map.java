@@ -2,6 +2,8 @@ package gui;
 
 import artefactos.LayerFoes;
 import artefactos.LayerGold;
+import artefactos.LayerOrcs;
+import artefactos.LayerPotion;
 import artefactos.LayerTrees;
 import artefactos.LayerWater;
 import artefactos.MapLayer;
@@ -51,6 +53,8 @@ public class Map extends Panel {
     LayerWater water = new LayerWater();
     LayerFoes foe = new LayerFoes();
     LayerGold gold = new LayerGold();
+    LayerOrcs orc = new LayerOrcs();
+    LayerPotion potion = new LayerPotion();
     public Map(Characters chars) {
         super();
 
@@ -66,6 +70,8 @@ public class Map extends Panel {
         layers.add(foe);
         layers.add(water);
         layers.add(gold);
+        layers.add(orc);
+        layers.add(potion);
 
         land = new EmptySpace(new TextColor.RGB(165, 127, 61)) {
             protected ComponentRenderer<EmptySpace> createDefaultRenderer() {
