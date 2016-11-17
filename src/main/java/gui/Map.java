@@ -24,7 +24,7 @@ import script.Foe;
 import script.Hero;
 
 public class Map extends Panel {
-
+// mudanca
 	public static final int COLUMNS = 50;
 	public static final int LINES = 16;
 	
