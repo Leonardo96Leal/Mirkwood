@@ -14,11 +14,9 @@ import com.googlecode.lanterna.gui2.EmptySpace;
 import com.googlecode.lanterna.gui2.Panel;
 import com.googlecode.lanterna.gui2.TextGUIGraphics;
 import com.googlecode.lanterna.input.KeyStroke;
-import gui.artifacts.LayerColor;
 import gui.artifacts.LayerRiver;
 import gui.artifacts.MapLayer;
 import gui.artifacts.MapObject;
-import gui.artifacts.ViewMap;
 import java.util.ArrayList;
 
 import script.Characters;

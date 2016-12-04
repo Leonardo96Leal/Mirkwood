@@ -26,7 +26,8 @@ public class LayerRiver extends MapLayer {
     }
 
     public void generateRiver() {
-        int col = _Rand.nextInt(COLUMNS);
+        //int col = _Rand.nextInt(COLUMNS);
+        /*int col = 12;
         for (int i = 0; i < LINES; i++) {
             TerminalPosition tpos = new TerminalPosition(col + (_Rand.nextInt(2) - 1), i);
             addObject(new Water(tpos, Water.WaterType.DEEP));
@@ -42,7 +43,7 @@ public class LayerRiver extends MapLayer {
 
             TerminalPosition tpos_nearshore2 = new TerminalPosition(tpos.getColumn() + 2, i);
             addObject(new Water(tpos_nearshore2, Water.WaterType.NEAR_SHORE));
-        }
+        }*/
     }
 
 }
