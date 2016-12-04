@@ -14,9 +14,11 @@ import com.googlecode.lanterna.gui2.EmptySpace;
 import com.googlecode.lanterna.gui2.Panel;
 import com.googlecode.lanterna.gui2.TextGUIGraphics;
 import com.googlecode.lanterna.input.KeyStroke;
+import gui.artifacts.LayerColor;
 import gui.artifacts.LayerRiver;
 import gui.artifacts.MapLayer;
 import gui.artifacts.MapObject;
+import gui.artifacts.ViewMap;
 import java.util.ArrayList;
 
 import script.Characters;
@@ -26,303 +28,312 @@ import script.Hero;
 public class Map extends Panel {
 // mudanca
 
-    public static final int COLUMNS = 30;
-    public static final int LINES = 30;
-    public static int col = 20, lin = 10;
-    public static int colv, linv;
-    public static int colf = 20, linf = 10;
+   public static final int COLUMNS = 256;
+   public static final int LINES = 256;
+   public static final int COL = 10, LIN = 5;
+   public static int colv, linv;
+   public static int colf = 0, linf = 0;
+   public static int coli = 0, lini = 0;
 
-    public static final int TREECOUNT = 1000;
-    public static final int BRANCHESCOUNT = 250;
+   public static final int TREECOUNT = 0;
+   public static final int BRANCHESCOUNT = 0;
 
-    int[] playerpos = new int[]{2, 2};
+   int[] playerpos = new int[]{2, 2};
 
-    Tree[] treespos = new Tree[TREECOUNT];
-    Tree[] branchespos = new Tree[BRANCHESCOUNT];
-    public static RGB bkgColor = new TextColor.RGB(165, 127, 61);
+   Tree[] treespos = new Tree[TREECOUNT];
+   Tree[] branchespos = new Tree[BRANCHESCOUNT];
+   public static RGB bkgColor = new TextColor.RGB(165, 127, 61);
+   MapObject mo;
+   
+   ArrayList<MapLayer> _layers;
 
-    ArrayList<MapLayer> _layers;
+   Characters _chars;
 
-    Characters _chars;
+   EmptySpace land;
 
-    EmptySpace land;
+   public Map(Characters chars) {
+      super();
 
-    public Map(Characters chars) {
-        super();
-
-        /*
+      /*
                 Create the respective layers
-         */
-        _layers = new ArrayList<MapLayer>();
-        _layers.add(new LayerRiver());
+       */
+      _layers = new ArrayList<MapLayer>();
+      _layers.add(new LayerRiver());
 
-        _chars = chars;
-        getBasePane();
+      _chars = chars;
+      getBasePane();
 
 //		mRand = new Random();
 //		generateWater();
-        generateTrees();
+      generateTrees();
 
-        land = new EmptySpace(new TextColor.RGB(165, 127, 61)) {
-            protected ComponentRenderer<EmptySpace> createDefaultRenderer() {
-                return new ComponentRenderer<EmptySpace>() {
-                    public TerminalSize getPreferredSize(EmptySpace component) {
-                        return new TerminalSize(Map.colf, Map.linf);
-                    }
+      land = new EmptySpace(new TextColor.RGB(165, 127, 61)) {
+         protected ComponentRenderer<EmptySpace> createDefaultRenderer() {
+            return new ComponentRenderer<EmptySpace>() {
 
-                    public void drawComponent(TextGUIGraphics graphics, EmptySpace component) {
-                        /*
+               public TerminalSize getPreferredSize(EmptySpace component) {
+                  TerminalPosition ppos = _chars.getHero().get_position();
+                  while (linf == 0 && colf == 0) {
+
+                     if (ppos.getColumn() + COL < COLUMNS) {
+                        colf = ppos.getColumn() + COL;
+                     } else {
+                        colf = COLUMNS;
+                     }
+
+                     if (ppos.getRow() + LIN < LINES) {
+                        linf = ppos.getRow() + LIN;
+                     } else {
+                        linf = LINES;
+                     }
+
+                     if (coli == 0 && lini == 0) {
+                        if (ppos.getColumn() - COL > 0) {
+                           coli = ppos.getColumn() - COL;
+                        }
+                        if (ppos.getRow() - LIN > 0) {
+                           lini = ppos.getRow() - LIN;
+                        }
+                     }
+                  }
+                  //System.out.println(TerminalSize.ZERO);
+                  //TerminalPosition.TOP_LEFT_CORNER;
+                  return new TerminalSize(TerminalPosition.TOP_LEFT_CORNER.getColumn() + Map.colf, TerminalPosition.TOP_LEFT_CORNER.getRow() + Map.linf);
+
+                  //return new TerminalSize(COLUMNS, LINES);
+               }
+
+               /*public TerminalSize withRelative() {
+                  return new TerminalSize(Map.coli, Map.lini);
+               }*/
+
+ /*public ViewMap getMap(EmptySpace component) {
+                  TerminalPosition ppos = _chars.getHero().get_position();
+                  while (linf == 0 && colf == 0) {
+                     linf = ppos.getRow() + 5;
+                     colf = ppos.getColumn() + 10;
+                  }
+                  return new ViewMap(coli, lini, colf, linf);
+               }*/
+               public void drawComponent(TextGUIGraphics graphics, EmptySpace component) {
+                  /*
 						 * Fill background
-                         */
-                        graphics.setBackgroundColor(bkgColor);
-                        graphics.setModifiers(EnumSet.of(SGR.BOLD));
-                        graphics.fill(' ');
+                   */
 
-                        /*
+                  graphics.setBackgroundColor(bkgColor);
+                  /*for (int i = 0; i < COLUMNS; i++) {
+                     for (int j = 0; j < LINES; i++) {
+                        if (i < 124 && j < 124) {
+                           
+                           TerminalPosition moupos = new TerminalPosition(i, j);
+                           graphics.setBackgroundColor(new TextColor.RGB(153, 76, 0));
+                        } else if (i > 132 && j > 132 && i < 256 && j < 256) {
+                           TerminalPosition ocepos = new TerminalPosition(i, j);
+                           graphics.setBackgroundColor(new TextColor.RGB(165, 102, 204));
+                        } else if (j > 132 && j < 256 && i < 124) {
+                           TerminalPosition lavpos = new TerminalPosition(i, j);
+                           graphics.setBackgroundColor(new TextColor.RGB(204, 0, 0));
+                        } else if (i > 132 && i < 256 && j < 124) {
+                           TerminalPosition despos = new TerminalPosition(i, j);
+                           graphics.setBackgroundColor(new TextColor.RGB(204, 204, 0));
+                        } else if (i < 124 && j < 124) {
+                           TerminalPosition nonpos = new TerminalPosition(i, j);
+                           graphics.setBackgroundColor(new TextColor.RGB(128, 128, 128));
+                        }
+                     }
+                  }*/
+                  graphics.setModifiers(EnumSet.of(SGR.BOLD));
+                  graphics.fill(' ');
+                  //new TextColor.RGB(204, 204, 0); //Desert
+                  //new TextColor.RGB(153, 76, 0); // Mountain 
+                  //new TextColor.RGB(165, 102, 204); //Ocean 
+                  //new TextColor.RGB(204, 0, 0); //Lava
+
+                  /*
 						 * Creates the trees and branches
-                         */
-                        for (Tree t : treespos) {
-                            graphics.setForegroundColor(t.getColor());
-                            graphics.putString(t.getmPosition().getColumn(), t.getmPosition().getRow(), String.valueOf(t.getmTree()));
-                        }
-                        for (Tree t : branchespos) {
-                            graphics.setForegroundColor(t.getColor());
-                            graphics.putString(t.getmPosition().getColumn(), t.getmPosition().getRow(), String.valueOf(t.getmTree()));
-                        }
+                   */
+                  for (Tree t : treespos) {
+                     graphics.setForegroundColor(t.getColor());
+                     graphics.putString(t.getmPosition().getColumn(), t.getmPosition().getRow(), String.valueOf(t.getmTree()));
+                  }
+                  for (Tree t : branchespos) {
+                     graphics.setForegroundColor(t.getColor());
+                     graphics.putString(t.getmPosition().getColumn(), t.getmPosition().getRow(), String.valueOf(t.getmTree()));
+                  }
 
-                        /*
+                  /*
 						 * Creates the objects of layers
-                         */
-                        TerminalPosition ppos = _chars.getHero().get_position();
-                        if (ppos.getColumn() < 10) {
-                            colv = ppos.getColumn();
-                            ppos = new TerminalPosition(ppos.getColumn() - colv, ppos.getRow());
-                        } else if (ppos.getColumn() > COLUMNS - 10) {
-
-                            ppos = new TerminalPosition(ppos.getColumn(), ppos.getRow());
-                        } else {
-                            ppos = new TerminalPosition(ppos.getColumn() - 10, ppos.getRow());
+                   */
+                  for (MapLayer ml : _layers) {
+                     for (int i = coli; i < colf; i++) {
+                        for (int j = lini; j < linf; j++) {
+                           mo = ml.getMaplayer()[i][j];
+                           if (mo != null) {
+                              graphics.setForegroundColor(mo.getForegroundColor());
+                              graphics.setBackgroundColor(mo.getBackgroundColor());
+                              graphics.putString(mo.getPosition(), String.valueOf(mo.getSymbol()));
+                           }
                         }
+                     }
+                  }
 
-                        if (ppos.getRow() < 5) {
-                            linv = ppos.getRow();
-                            ppos = new TerminalPosition(ppos.getColumn(), ppos.getRow() - linv);
-                        } else if (ppos.getRow() > LINES - 5) {
-
-                            ppos = new TerminalPosition(ppos.getColumn(), ppos.getRow());
-                        } else {
-                            ppos = new TerminalPosition(ppos.getColumn(), ppos.getRow() - 5);
-                        }
-                        for (MapLayer ml : _layers) {
-                            for (int i = ppos.getColumn(); i < colf; i++) {
-                                for (int j = ppos.getRow(); j < linf; j++) {
-                                    MapObject mo = ml.getMaplayer()[i][j];
-                                    if (mo != null) {
-                                        graphics.setForegroundColor(mo.getForegroundColor());
-                                        graphics.setBackgroundColor(mo.getBackgroundColor());
-                                        graphics.putString(mo.getPosition(), String.valueOf(mo.getSymbol()));
-                                    }
-                                }
-                            }
-
-                        }
-
-                        /*
+                  /*
 						 * Draw characters
-                         */
-                        Hero h = _chars.getHero();
-                        graphics.setBackgroundColor(h.get_bkgColor());
-                        graphics.setForegroundColor(h.get_foregroundColor());
-                        graphics.setCharacter(h.get_position(), h.get_face());
+                   */
+                  Hero h = _chars.getHero();
+                  graphics.setBackgroundColor(h.get_bkgColor());
+                  graphics.setForegroundColor(h.get_foregroundColor());
+                  graphics.setCharacter(h.get_position(), h.get_face());
 
-                        graphics.setModifiers(EnumSet.of(SGR.BLINK));
-                        Foe f = _chars.getFoe();
-                        graphics.setBackgroundColor(f.get_bkgColor());
-                        graphics.setForegroundColor(f.get_foregroundColor());
-                        graphics.setCharacter(f.get_position(), f.get_face());
-                    }
-                };
+                  graphics.setModifiers(EnumSet.of(SGR.BLINK));
+                  Foe f = _chars.getFoe();
+                  graphics.setBackgroundColor(f.get_bkgColor());
+                  graphics.setForegroundColor(f.get_foregroundColor());
+                  graphics.setCharacter(f.get_position(), f.get_face());
+               }
+            };
+         }
+      };
+
+      addComponent(land);
+
+   }
+
+   public void generateTrees() {
+      for (int i = 0; i < TREECOUNT; i++) {
+         treespos[i] = Tree.factoryRandomTree(COLUMNS, LINES);
+      }
+
+      for (int i = 0; i < BRANCHESCOUNT; i++) {
+         branchespos[i] = Tree.factoryRandomBranch(COLUMNS, LINES);
+      }
+   }
+
+   public void refreshLand() {
+      land.invalidate();
+   }
+
+   public void updatePlayer(KeyStroke keyStroke) {
+      TerminalPosition ppos = _chars.getHero().get_position();
+      Hero player = _chars.getHero();
+      switch (keyStroke.getCharacter()) {
+         case 'w': {
+            TerminalPosition npos = new TerminalPosition(ppos.getColumn(), ppos.getRow() - 1);
+            if (isPositionAvailable(npos)) {
+               player.set_position(npos);
+               if (npos.getRow() - LIN < 0) {
+                  lini = 0;
+                  linf--;
+               } else if (npos.getRow() + LIN > LINES) {
+                  lini--;
+                  linf = LINES;
+               } else {
+                  lini--;
+                  linf--;
+               }
             }
-        };
-
-        addComponent(land);
-
-    }
-
-    public void generateTrees() {
-        for (int i = 0; i < TREECOUNT; i++) {
-            treespos[i] = Tree.factoryRandomTree(COLUMNS, LINES);
-        }
-
-        for (int i = 0; i < BRANCHESCOUNT; i++) {
-            branchespos[i] = Tree.factoryRandomBranch(COLUMNS, LINES);
-        }
-    }
-
-    public void refreshLand() {
-        land.invalidate();
-    }
-
-    public void updatePlayer(KeyStroke keyStroke) {
-        TerminalPosition ppos = _chars.getHero().get_position();
-        Hero player = _chars.getHero();
-        switch (keyStroke.getCharacter()) {
-            case 'w': {
-                TerminalPosition npos = new TerminalPosition(ppos.getColumn(), ppos.getRow() - 1);
-                if (isPositionAvailable(npos)) {
-                    player.set_position(npos);
-                    if (lin >= 5) {
-                        if ((lin - 5) > 0) {
-                            lin--;
-                            linf--;
-                        } else if (lin != 0 && ((lin - 5) < 0)) {
-                            lin--;
-                            linf--;
-                        } else if (lin == 0 && (ppos.getRow() > 0)) {
-                            linf = lin;
-                        } else if (lin + 5>= LINES){
-                            lin--;
-                        }
-                    } else {
-                        lin--;
-                        if(linf<=5){
-                            linf--;
-                        }
-                    }
-                }
-                break;
+            break;
+         }
+         case 's': {
+            TerminalPosition npos = new TerminalPosition(ppos.getColumn(), ppos.getRow() + 1);
+            if (isPositionAvailable(npos)) {
+               player.set_position(npos);
+               if (npos.getRow() - LIN < 0) {
+                  lini = 0;
+                  linf++;
+               } else if (npos.getRow() + LIN >= LINES) {
+                  lini++;
+                  linf = LINES;
+               } else {
+                  lini++;
+                  linf++;
+               }
             }
-            case 's': {
-                TerminalPosition npos = new TerminalPosition(ppos.getColumn(), ppos.getRow() + 1);
-                if (isPositionAvailable(npos)) {
-                    player.set_position(npos);
-                    if (lin - 5 >= 0) {
-                        if ((lin + 5) < LINES) {
-                            lin++;
-                            linf++;
-                        } else if (lin != LINES && ((lin + 5) >= LINES)) {
-                            lin++;
-                            linf++;
-                        } else if (lin == LINES && (ppos.getRow() < LINES)) {
-                            linf = lin;
-                        }
-                    }else {
-                        lin++;
-                    }
-                }
-                break;
+            break;
+         }
+         case 'a': {
+            TerminalPosition npos = new TerminalPosition(ppos.getColumn() - 1, ppos.getRow());
+            if (isPositionAvailable(npos)) {
+               player.set_position(npos);
+               if (npos.getColumn() - COL < 0) {
+                  coli = 0;
+                  colf--;
+               } else if (npos.getColumn() + COL > COLUMNS) {
+                  coli--;
+                  colf = COLUMNS;
+               } else {
+                  coli--;
+                  colf--;
+               }
             }
-            case 'a': {
-                TerminalPosition npos = new TerminalPosition(ppos.getColumn() - 1, ppos.getRow());
-                if (isPositionAvailable(npos)) {
-                    player.set_position(npos);
-                    if (col >= 10) {
-                        if ((col - 10) > 0) {
-                            col--;
-                            colf--;
-                        } else if (col != 0 && ((col - 10) < 0)) {
-                            col--;
-                            colf--;
-                        } else if (col == 0 && (ppos.getColumn() > 0)) {
-                            colf = col;
-                        }
-                    } else {
-                        col--;
-                        if(colf<=10){
-                            colf--;
-                        }
-                    }
-                }
-                break;
+            break;
+         }
+
+         case 'd': {
+            TerminalPosition npos = new TerminalPosition(ppos.getColumn() + 1, ppos.getRow());
+            if (isPositionAvailable(npos)) {
+               player.set_position(npos);
+               if (npos.getColumn() - COL < 0) {
+                  coli = 0;
+                  colf++;
+               } else if (npos.getColumn() + COL > COLUMNS) {
+                  coli++;
+                  colf = COLUMNS;
+               } else {
+                  coli++;
+                  colf++;
+               }
             }
+            break;
+         }
 
-            case 'd': {
-                TerminalPosition npos = new TerminalPosition(ppos.getColumn() + 1, ppos.getRow());
-                if (isPositionAvailable(npos)) {
-                    player.set_position(npos);
-                    if (col - 10 >= 0) {
-                        if ((col + 10) < COLUMNS) {
-                            col++;
-                            colf++;
-                        } else if (col != COLUMNS && ((col + 10) >= COLUMNS)) {
-                            col++;
-                            colf++;
-                        } else if (col == COLUMNS && (ppos.getColumn() < COLUMNS)) {
-                            colf = col;
-                        }
-                    }else {
-                        col++;
-                    }
-                }
-                break;
-            }
+         default:
+            System.out.println(keyStroke.getCharacter().toString());
+            break;
+      }
 
-            default:
-                System.out.println(keyStroke.getCharacter().toString());
-                break;
-        }
+      refreshLand();
+   }
 
-        refreshLand();
-    }
-
-    private boolean isPositionAvailable(TerminalPosition pos) {
-        /*
+   private boolean isPositionAvailable(TerminalPosition pos) {
+      /*
              * Bounds
-         */
+       */
 
-        if (pos.getColumn() < 0) {
-            return false;
-        } else if (pos.getColumn() > COLUMNS - 1) {
-            return false;
-        } else if (pos.getRow() < 0) {
-            return false;
-        } else if (pos.getRow() > LINES - 1) {
-            return false;
-        }
-        TerminalPosition ppos = _chars.getHero().get_position();
-        if (ppos.getColumn() < 10) {
-            colv = ppos.getColumn();
-            ppos = new TerminalPosition(ppos.getColumn() - colv, ppos.getRow());
-        } else if (ppos.getColumn() > COLUMNS - 10) {
+      if (pos.getColumn() < 0) {
+         return false;
+      } else if (pos.getColumn() > COLUMNS - 1) {
+         return false;
+      } else if (pos.getRow() < 0) {
+         return false;
+      } else if (pos.getRow() > LINES - 1) {
+         return false;
+      }
 
-            ppos = new TerminalPosition(ppos.getColumn(), ppos.getRow());
-        } else {
-            ppos = new TerminalPosition(ppos.getColumn() - 10, ppos.getRow());
-        }
-
-        if (ppos.getRow() < 5) {
-            linv = ppos.getRow();
-            ppos = new TerminalPosition(ppos.getColumn(), ppos.getRow() - linv);
-        } else if (ppos.getRow() > LINES - 5) {
-
-            ppos = new TerminalPosition(ppos.getColumn(), ppos.getRow());
-        } else {
-            ppos = new TerminalPosition(ppos.getColumn(), ppos.getRow() - 5);
-        }
-        for (MapLayer ml : _layers) {
-            for (int i = ppos.getColumn(); i < colf; i++) {
-                for (int j = ppos.getRow(); j < linf; j++) {
-                    MapObject mo = ml.getMaplayer()[i][j];
-                    if (mo != null) {
-                        if (mo.getPosition().getColumn() == pos.getColumn()
-                                && mo.getPosition().getRow() == pos.getRow()
-                                && !mo.isFree()) {
-                            return false;
-                        }
-                    }
-                }
+      for (MapLayer ml : _layers) {
+         for (int i = coli; i < colf; i++) {
+            for (int j = lini; j < linf; j++) {
+               MapObject mo = ml.getMaplayer()[i][j];
+               if (mo != null) {
+                  if (mo.getPosition().getColumn() == pos.getColumn()
+                          && mo.getPosition().getRow() == pos.getRow()
+                          && !mo.isFree()) {
+                     return false;
+                  }
+               }
             }
-        }
+         }
+      }
 
-        return true;
-    }
+      return true;
+   }
 
-    /*
+   /*
 	 * @Override protected void onAfterDrawing(TextGUIGraphics graphics) { //
 	 * TODO Auto-generated method stub super.onAfterDrawing(graphics);
 	 * graphics.setForegroundColor(TextColor.ANSI.CYAN);
 	 * graphics.setBackgroundColor(TextColor.ANSI.BLUE);
 	 * graphics.setModifiers(EnumSet.of(SGR.BOLD)); graphics.fill(' ');
 	 * graphics.putString(3, 0, "Text GUI in 100% Java"); }
-     */
+    */
 }
